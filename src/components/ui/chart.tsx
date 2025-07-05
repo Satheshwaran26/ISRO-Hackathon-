@@ -354,10 +354,10 @@ function getPayloadConfigFromPayload(
 }
 
 // Add type for the item parameter
-interface ChartItem {
+interface DataItem {
   name: string;
   value: number;
-  // Add other properties as needed
+  [key: string]: any;
 }
 
 export {
