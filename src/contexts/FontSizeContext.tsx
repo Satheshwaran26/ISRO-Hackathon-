@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from "react";
-import type { ReactNode } from "react";
 
 interface FontSizeContextType {
   fontSize: string;
@@ -9,7 +8,11 @@ interface FontSizeContextType {
 
 const FontSizeContext = createContext<FontSizeContextType | undefined>(undefined);
 
-export function FontSizeProvider({ children }: { children: ReactNode }) {
+interface FontSizeProviderProps {
+  children: React.ReactNode;
+}
+
+export function FontSizeProvider({ children }: FontSizeProviderProps) {
   const [fontSize, setFontSize] = useState("base");
 
   const getFontSizeClass = () => {
