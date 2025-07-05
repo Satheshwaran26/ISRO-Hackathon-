@@ -353,6 +353,13 @@ function getPayloadConfigFromPayload(
     : config[key as keyof typeof config]
 }
 
+// Add type for the item parameter
+interface ChartItem {
+  name: string;
+  value: number;
+  // Add other properties as needed
+}
+
 export {
   ChartContainer,
   ChartTooltip,
