@@ -1,8 +1,11 @@
 import { createContext, useContext, useState } from "react";
 
+const fontSizes = ["sm", "base", "lg", "xl"] as const;
+type FontSize = typeof fontSizes[number];
+
 interface FontSizeContextType {
-  fontSize: string;
-  setFontSize: (size: string) => void;
+  fontSize: FontSize;
+  setFontSize: (size: FontSize) => void;
   getFontSizeClass: () => string;
   increaseFontSize: () => void;
   decreaseFontSize: () => void;
@@ -14,9 +17,6 @@ const FontSizeContext = createContext<FontSizeContextType | undefined>(undefined
 interface FontSizeProviderProps {
   children: React.ReactNode;
 }
-
-const fontSizes = ["sm", "base", "lg", "xl"] as const;
-type FontSize = typeof fontSizes[number];
 
 export function FontSizeProvider({ children }: FontSizeProviderProps) {
   const [fontSize, setFontSize] = useState<FontSize>("base");
@@ -55,14 +55,14 @@ export function FontSizeProvider({ children }: FontSizeProviderProps) {
   };
 
   return (
-    <FontSizeContext.Provider 
-      value={{ 
-        fontSize, 
-        setFontSize, 
+    <FontSizeContext.Provider
+      value={{
+        fontSize,
+        setFontSize,
         getFontSizeClass,
         increaseFontSize,
         decreaseFontSize,
-        resetFontSize
+        resetFontSize,
       }}
     >
       {children}
