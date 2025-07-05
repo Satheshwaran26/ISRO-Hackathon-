@@ -4,6 +4,10 @@ import { Dot } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+interface ExtendedSlotProps extends SlotProps {
+  className?: string;
+}
+
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
   React.ComponentPropsWithoutRef<typeof OTPInput>
@@ -30,7 +34,7 @@ InputOTPGroup.displayName = "InputOTPGroup"
 
 const InputOTPSlot = React.forwardRef<
   React.ElementRef<"div">,
-  SlotProps
+  ExtendedSlotProps
 >(({ char, hasFakeCaret, isActive, className, ...props }, ref) => (
   <div
     ref={ref}

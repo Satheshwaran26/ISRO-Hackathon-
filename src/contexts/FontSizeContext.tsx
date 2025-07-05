@@ -4,6 +4,9 @@ interface FontSizeContextType {
   fontSize: string;
   setFontSize: (size: string) => void;
   getFontSizeClass: () => string;
+  increaseFontSize: () => void;
+  decreaseFontSize: () => void;
+  resetFontSize: () => void;
 }
 
 const FontSizeContext = createContext<FontSizeContextType | undefined>(undefined);
@@ -12,8 +15,11 @@ interface FontSizeProviderProps {
   children: React.ReactNode;
 }
 
+const fontSizes = ["sm", "base", "lg", "xl"] as const;
+type FontSize = typeof fontSizes[number];
+
 export function FontSizeProvider({ children }: FontSizeProviderProps) {
-  const [fontSize, setFontSize] = useState("base");
+  const [fontSize, setFontSize] = useState<FontSize>("base");
 
   const getFontSizeClass = () => {
     switch (fontSize) {
@@ -30,8 +36,35 @@ export function FontSizeProvider({ children }: FontSizeProviderProps) {
     }
   };
 
+  const increaseFontSize = () => {
+    const currentIndex = fontSizes.indexOf(fontSize);
+    if (currentIndex < fontSizes.length - 1) {
+      setFontSize(fontSizes[currentIndex + 1]);
+    }
+  };
+
+  const decreaseFontSize = () => {
+    const currentIndex = fontSizes.indexOf(fontSize);
+    if (currentIndex > 0) {
+      setFontSize(fontSizes[currentIndex - 1]);
+    }
+  };
+
+  const resetFontSize = () => {
+    setFontSize("base");
+  };
+
   return (
-    <FontSizeContext.Provider value={{ fontSize, setFontSize, getFontSizeClass }}>
+    <FontSizeContext.Provider 
+      value={{ 
+        fontSize, 
+        setFontSize, 
+        getFontSizeClass,
+        increaseFontSize,
+        decreaseFontSize,
+        resetFontSize
+      }}
+    >
       {children}
     </FontSizeContext.Provider>
   );
