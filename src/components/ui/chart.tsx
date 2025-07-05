@@ -311,7 +311,5 @@ export {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  type ChartConfig,
   type DataItem,
-  ChartStyle,
-}
+};
