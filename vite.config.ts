@@ -10,18 +10,21 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  assetsInclude: ['**/*.nc', '**/*.h5', '**/*.csv'], // Add all data file types
+  assetsInclude: ['**/*.nc', '**/*.h5', '**/*.csv', '**/*.jpg', '**/*.png'], // Add image formats
   build: {
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
           const fileExtension = assetInfo.name?.split('.').pop()?.toLowerCase();
-          if (fileExtension === 'nc' || fileExtension === 'h5' || fileExtension === 'csv') {
+          if (fileExtension === 'nc' || fileExtension === 'h5' || fileExtension === 'csv' || 
+              fileExtension === 'jpg' || fileExtension === 'png') {
             return 'assets/[name][extname]';
           }
           return 'assets/[name]-[hash][extname]';
         },
       },
     },
+    assetsDir: 'assets',
+    copyPublicDir: true,
   },
 });

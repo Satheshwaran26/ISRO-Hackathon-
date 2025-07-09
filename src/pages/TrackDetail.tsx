@@ -159,8 +159,8 @@ const TrackDetail = () => {
 
   const NavBar = () => (
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-blue-100">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button 
               onClick={handleBackToDashboard}
@@ -172,31 +172,31 @@ const TrackDetail = () => {
             <span className="text-2xl font-poppins font-bold text-blue-600">
               Team Lava
             </span>
-          </div>
+              </div>
 
           {/* Font Size Controls */}
           <div className="flex items-center space-x-2 bg-blue-50 rounded-full px-4 py-2">
-            <Button 
-              onClick={decreaseFontSize}
+                <Button 
+                  onClick={decreaseFontSize}
               variant="ghost"
               className="hover:bg-blue-100 text-blue-600 font-medium w-8 h-8 rounded-full p-0"
-              disabled={fontSize === "xs"}
-            >
-              A-
-            </Button>
+                  disabled={fontSize === "xs"}
+                >
+                  A-
+                </Button>
             <span className="text-blue-600 font-medium px-2">A</span>
-            <Button 
-              onClick={increaseFontSize}
+                <Button 
+                  onClick={increaseFontSize}
               variant="ghost"
               className="hover:bg-blue-100 text-blue-600 font-medium w-8 h-8 rounded-full p-0"
-              disabled={fontSize === "2xl"}
-            >
-              A+
-            </Button>
+                  disabled={fontSize === "2xl"}
+                >
+                  A+
+                </Button>
+          </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
   );
 
   return (

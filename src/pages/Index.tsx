@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useFontSize } from '@/contexts/FontSizeContext';
 import { motion } from 'framer-motion';
+// Import the hero image
+import heroImage from '@/assets/img/3DIMG_01NOV2015_0000_L1C_ASIA_MER_V01R00.jpg';
 
 interface IndexProps {
   showDashboard?: boolean;
@@ -156,93 +158,90 @@ const Index = ({ showDashboard: initialShowDashboard = false }: IndexProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-white font-poppins">
+    <div className={`min-h-screen bg-white ${fontSize}`}>
       <NavBar />
 
       {/* Hero Section */}
       <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-b from-blue-50/50 to-white">
         {/* Background Decoration */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-100 rounded-full opacity-20"></div>
-          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-orange-100 rounded-full opacity-20"></div>
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-orange-100 rounded-full blur-3xl opacity-20"></div>
         </div>
 
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Text Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-left"
+        <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-12 items-center relative">
+          {/* Text Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
+          >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-blue-600 leading-tight">
+              {getText('Tropical Cyclone Prediction System', 'उष्णकटिबंधीय चक्रवात पूर्वानुमान प्रणाली')}
+            </h1>
+            <p className="text-xl text-blue-600/70 leading-relaxed">
+              {getText(
+                'Advanced satellite data analysis and machine learning solutions for accurate cyclone prediction',
+                'सटीक चक्रवात भविष्यवाणी के लिए उन्नत उपग्रह डेटा विश्लेषण और मशीन लर्निंग समाधान'
+              )}
+            </p>
+            <Button 
+              onClick={goToDashboard}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-6 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
-              <h1 className="text-5xl md:text-6xl font-bold text-blue-600 mb-6 leading-tight">
-                {getText('Tropical Cyclone', 'उष्णकटिबंधीय चक्रवात')}
-                <br />
-                {getText('Prediction System', 'पूर्वानुमान प्रणाली')}
-              </h1>
-              <p className="text-xl text-blue-600/80 mb-12 max-w-2xl leading-relaxed">
-                {getText(
-                  'Advanced satellite data analysis and machine learning solutions for accurate cyclone prediction',
-                  'सटीक चक्रवात पूर्वानुमान के लिए उन्नत उपग्रह डेटा विश्लेषण और मशीन लर्निंग समाधान'
-                )}
-              </p>
-              <Button 
-                onClick={goToDashboard}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-6 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                {getText('View Project', 'प्रोजेक्ट देखें')}
-              </Button>
+              {getText('View Project', 'प्रोजेक्ट देखें')}
+            </Button>
+          </motion.div>
+
+          {/* Image Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative"
+          >
+            <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+              <img
+                src="/src/assets/img/3DIMG_01NOV2015_0000_L1C_ASIA_MER_V01R00.jpg"
+                alt="Tropical Cyclone Visualization"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
+              <div className="absolute bottom-6 left-6 right-6">
+                <p className="text-white text-lg font-semibold">
+                  {getText('Real-time Satellite Imagery', 'रीयल-टाइम सैटेलाइट इमेजरी')}
+                </p>
+                <p className="text-white/80 text-sm">
+                  {getText('INSAT-3DR/3DS Data', 'INSAT-3DR/3DS डेटा')}
+                </p>
+              </div>
+            </div>
+
+            {/* Floating Stats Cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="absolute -right-4 top-4 bg-white rounded-2xl p-4 shadow-lg border border-blue-100"
+            >
+              <p className="text-sm text-blue-600 font-medium">Resolution</p>
+              <p className="text-lg font-semibold text-blue-900">4km/pixel</p>
             </motion.div>
 
-            {/* Image Content */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="absolute -left-4 bottom-4 bg-white rounded-2xl p-4 shadow-lg border border-blue-100"
             >
-              <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                <img
-                  src="/src/assets/img/3DIMG_01NOV2015_0000_L1C_ASIA_MER_V01R00.jpg"
-                  alt="Tropical Cyclone Visualization"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
-                <div className="absolute bottom-6 left-6 right-6">
-                  <p className="text-white text-lg font-semibold">
-                    {getText('Real-time Satellite Imagery', 'रीयल-टाइम सैटेलाइट इमेजरी')}
-                  </p>
-                  <p className="text-white/80 text-sm">
-                    {getText('INSAT-3DR/3DS Data', 'INSAT-3DR/3DS डेटा')}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Floating Stats Cards */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-lg p-4 border-2 border-blue-100"
-              >
-                <p className="text-blue-600 font-semibold">Data Coverage</p>
-                <p className="text-orange-500">November 2015</p>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-lg p-4 border-2 border-blue-100"
-              >
-                <p className="text-blue-600 font-semibold">Resolution</p>
-                <p className="text-orange-500">4km/pixel</p>
-              </motion.div>
+              <p className="text-sm text-blue-600 font-medium">Data Coverage</p>
+              <p className="text-lg font-semibold text-blue-900">November 2015</p>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </section>
+
 
       {/* Problem Statement Section */}
       <section id="problem" className="py-20 bg-white border-t border-b border-blue-100">
