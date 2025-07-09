@@ -6,6 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { MapPin, Clock, Thermometer, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { trackData } from '../data/trackData';
+// Import data files
+import csvFile from '../assets/img/tcc_tracked_output.csv';
+import ncFile from '../assets/img/tcc_tracked_output.nc';
+import hdfFile from '../assets/img/tcc_tracked_output.h5';
 
 interface TrackPoint {
   timestamp: string;
@@ -127,26 +131,26 @@ const TrackDataTable: React.FC = () => {
 
   const handleDownload = (format: 'netcdf' | 'hdf5' | 'csv') => {
     let filename: string;
-    let filePath: string;
+    let fileUrl: string;
 
     switch (format) {
       case 'netcdf':
         filename = 'tcc_tracked_output.nc';
-        filePath = '/src/assets/img/tcc_tracked_output.nc';
+        fileUrl = ncFile;
         break;
       case 'hdf5':
         filename = 'tcc_tracked_output.h5';
-        filePath = '/src/assets/img/tcc_tracked_output.h5';
+        fileUrl = hdfFile;
         break;
       case 'csv':
         filename = 'tcc_tracked_output.csv';
-        filePath = '/src/assets/img/tcc_tracked_output.csv';
+        fileUrl = csvFile;
         break;
     }
 
     // Create a link element and trigger download
     const link = document.createElement('a');
-    link.href = filePath;
+    link.href = fileUrl;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
