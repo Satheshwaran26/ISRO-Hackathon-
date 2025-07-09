@@ -202,11 +202,12 @@ const Index = ({ showDashboard: initialShowDashboard = false }: IndexProps) => {
             className="relative"
           >
             <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
-              <img
-                src="./src/assets/img/3DIMG_01NOV2015_0000_L1C_ASIA_MER_V01R00.jpg"
-                alt="Tropical Cyclone Visualization"
-                className="w-full h-full object-cover"
-              />
+            <img
+  src={heroImage}
+  alt="Tropical Cyclone Visualization"
+  className="w-full h-full object-cover"
+/>
+
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
               <div className="absolute bottom-6 left-6 right-6">
                 
