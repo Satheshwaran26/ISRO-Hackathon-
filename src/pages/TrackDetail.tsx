@@ -42,6 +42,7 @@ const TrackDetail = () => {
   const [showCompareModal, setShowCompareModal] = useState(false);
   const { increaseFontSize, decreaseFontSize, fontSize } = useFontSize();
   const imageMap = import.meta.glob('/src/assets/img/*', { eager: true });
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
 
   // Helper functions to calculate aggregated values from track points
@@ -135,49 +136,67 @@ const TrackDetail = () => {
     navigate('/', { state: { showDashboard: true } });
   };
 
+  // Function to handle navigation
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (!selectedImage || !track) return;
+    
+    // Find current index
+    const currentIndex = track.track_points.findIndex(
+      point => point.image_filename === selectedImage.image_filename
+    );
+    
+    if (currentIndex === -1) return;
+    
+    let newIndex;
+    if (direction === 'prev') {
+      newIndex = currentIndex > 0 ? currentIndex - 1 : track.track_points.length - 1;
+    } else {
+      newIndex = currentIndex < track.track_points.length - 1 ? currentIndex + 1 : 0;
+    }
+    
+    setSelectedImage(track.track_points[newIndex]);
+  };
+
   const NavBar = () => (
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-blue-100">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+      <div className="container mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button 
+            <button 
               onClick={handleBackToDashboard}
-              variant="ghost"
-              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 flex items-center gap-2"
+              className="text-blue-600 hover:text-blue-800 font-medium transition-colors flex items-center gap-2"
             >
               <ArrowLeft className="w-5 h-5" />
               Back to Dashboard
-            </Button>
+            </button>
             <span className="text-2xl font-poppins font-bold text-blue-600">
               Team Lava
             </span>
-              </div>
+          </div>
 
-          <div className="flex items-center space-x-8">
-            {/* Font Size Controls */}
-            <div className="flex items-center space-x-2 bg-blue-50 rounded-full px-4 py-2">
-                <Button 
-                  onClick={decreaseFontSize}
-                variant="ghost"
-                className="hover:bg-blue-100 text-blue-600 font-medium w-8 h-8 rounded-full p-0"
-                  disabled={fontSize === "xs"}
-                >
-                  A-
-                </Button>
-              <span className="text-blue-600 font-medium px-2">A</span>
-                <Button 
-                  onClick={increaseFontSize}
-                variant="ghost"
-                className="hover:bg-blue-100 text-blue-600 font-medium w-8 h-8 rounded-full p-0"
-                  disabled={fontSize === "2xl"}
-                >
-                  A+
-              </Button>
-            </div>
-            </div>
+          {/* Font Size Controls */}
+          <div className="flex items-center space-x-2 bg-blue-50 rounded-full px-4 py-2">
+            <Button 
+              onClick={decreaseFontSize}
+              variant="ghost"
+              className="hover:bg-blue-100 text-blue-600 font-medium w-8 h-8 rounded-full p-0"
+              disabled={fontSize === "xs"}
+            >
+              A-
+            </Button>
+            <span className="text-blue-600 font-medium px-2">A</span>
+            <Button 
+              onClick={increaseFontSize}
+              variant="ghost"
+              className="hover:bg-blue-100 text-blue-600 font-medium w-8 h-8 rounded-full p-0"
+              disabled={fontSize === "2xl"}
+            >
+              A+
+            </Button>
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
   );
 
   return (
@@ -285,23 +304,51 @@ const TrackDetail = () => {
       {/* Enhanced Image Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-8"
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
           onClick={closeImageModal}
         >
-          <div className="relative w-full max-w-[90vw] max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl" 
-               onClick={(e) => e.stopPropagation()}>
-            <div className="flex flex-col lg:flex-row h-full">
-              {/* Larger Image Section */}
-              <div className="flex-1 bg-black flex items-center justify-center p-4">
+          {/* Previous Arrow Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateImage('prev');
+            }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition-all duration-200 backdrop-blur-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Next Arrow Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateImage('next');
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition-all duration-200 backdrop-blur-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <div 
+            className="relative w-full max-w-7xl bg-white rounded-2xl overflow-hidden shadow-2xl" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col lg:flex-row">
+              {/* Image Section */}
+              <div className="lg:flex-1 bg-black flex items-center justify-center p-4">
                 <img 
                   src={(imageMap[`/src/assets/img/${selectedImage.image_filename}`] as { default: string })?.default}
                   alt={selectedImage.image_filename}
-                  className="max-w-full max-h-[80vh] object-contain"
+                  className="max-w-full max-h-[75vh] object-contain"
                 />
               </div>
 
-              {/* Data Section */}
-              <div className="w-full lg:w-[400px] bg-white overflow-y-auto">
+              {/* Analysis Section */}
+              <div className="w-full lg:w-[480px] bg-white">
                 <div className="sticky top-0 bg-blue-600 text-white p-6">
                   <h3 className="text-2xl font-bold flex items-center gap-3">
                     <Layers className="w-7 h-7" />
@@ -309,41 +356,41 @@ const TrackDetail = () => {
                   </h3>
                 </div>
                 
-                <div className="p-6 space-y-6">
-                  {/* Filename Section */}
-                  <div className="bg-blue-50 p-6 rounded-xl">
-                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-3 text-lg">
+                <div className="p-6 space-y-4 max-h-[calc(75vh-4rem)] overflow-y-auto">
+                  {/* File Information */}
+                  <div className="bg-blue-50/50 p-4 rounded-xl">
+                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-2">
                       <Calendar className="w-5 h-5 text-blue-600" />
                       File Information
                     </label>
-                    <p className="text-sm font-mono break-all bg-white p-3 rounded-lg shadow-inner">
+                    <p className="text-sm font-mono break-all bg-white p-2 rounded-lg shadow-inner">
                       {selectedImage.image_filename}
                     </p>
                   </div>
                   
-                  {/* Timestamp Section */}
-                  <div className="bg-blue-50 p-6 rounded-xl">
-                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-3 text-lg">
+                  {/* Time Data */}
+                  <div className="bg-blue-50/50 p-4 rounded-xl">
+                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-2">
                       <Clock className="w-5 h-5 text-green-600" />
                       Time Data
                     </label>
-                    <p className="text-base bg-white p-3 rounded-lg shadow-inner">
+                    <p className="text-base bg-white p-2 rounded-lg shadow-inner">
                       {formatTimestamp(selectedImage.timestamp)}
                     </p>
                   </div>
                   
-                  {/* Location Section */}
-                  <div className="bg-blue-50 p-6 rounded-xl">
-                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-3 text-lg">
+                  {/* Location Data */}
+                  <div className="bg-blue-50/50 p-4 rounded-xl">
+                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-2">
                       <MapPin className="w-5 h-5 text-red-600" />
                       Location Data
                     </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white p-3 rounded-lg shadow-inner">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white p-2 rounded-lg shadow-inner">
                         <span className="text-sm text-gray-600 block mb-1">Latitude</span>
                         <p className="text-base font-mono text-blue-900">{selectedImage.center_lat.toFixed(4)}°</p>
                       </div>
-                      <div className="bg-white p-3 rounded-lg shadow-inner">
+                      <div className="bg-white p-2 rounded-lg shadow-inner">
                         <span className="text-sm text-gray-600 block mb-1">Longitude</span>
                         <p className="text-base font-mono text-blue-900">{selectedImage.center_lon.toFixed(4)}°</p>
                       </div>
@@ -351,30 +398,33 @@ const TrackDetail = () => {
                   </div>
 
                   {/* Temperature Data */}
-                  <div className="bg-blue-50 p-6 rounded-xl">
-                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-3 text-lg">
+                  <div className="bg-blue-50/50 p-4 rounded-xl">
+                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-2">
                       <Thermometer className="w-5 h-5 text-orange-600" />
                       Temperature Analysis
                     </label>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
                       {[
-                        { label: 'Mean BT', value: selectedImage.mean_tb_k.toFixed(2) },
-                        { label: 'Min BT', value: selectedImage.min_tb_k.toFixed(2) },
-                        { label: 'Median BT', value: selectedImage.median_tb_k.toFixed(2) },
-                        { label: 'Std BT', value: selectedImage.std_tb_k.toFixed(2) }
+                        { label: 'Mean BT', value: `${selectedImage.mean_tb_k.toFixed(2)} K` },
+                        { label: 'Min BT', value: `${selectedImage.min_tb_k.toFixed(2)} K` },
+                        { label: 'Median BT', value: `${selectedImage.median_tb_k.toFixed(2)} K` },
+                        { label: 'Std BT', value: `${selectedImage.std_tb_k.toFixed(2)} K` }
                       ].map(item => (
-                        <div key={item.label} className="bg-white p-3 rounded-lg shadow-inner">
+                        <div key={item.label} className="bg-white p-2 rounded-lg shadow-inner">
                           <span className="text-sm text-gray-600 block mb-1">{item.label}</span>
-                          <span className="text-base font-mono text-blue-900">{item.value} K</span>
+                          <span className="text-base font-mono text-blue-900">{item.value}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Physical Properties */}
-                  <div className="bg-blue-50 p-6 rounded-xl">
-                    <label className="font-semibold text-blue-900 mb-3 block text-lg">Physical Properties</label>
-                    <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-blue-50/50 p-4 rounded-xl">
+                    <label className="font-semibold text-blue-900 flex items-center gap-2 mb-2">
+                      <Layers className="w-5 h-5 text-purple-600" />
+                      Physical Properties
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
                       {[
                         { label: 'Pixel Count', value: selectedImage.pixel_count.toLocaleString() },
                         { label: 'Mean Radius', value: `${selectedImage.mean_radius_km.toFixed(2)} km` },
@@ -382,7 +432,7 @@ const TrackDetail = () => {
                         { label: 'Mean CTH', value: `${selectedImage.mean_cth_km.toFixed(2)} km` },
                         { label: 'Max CTH', value: `${selectedImage.max_cth_km.toFixed(2)} km` }
                       ].map(item => (
-                        <div key={item.label} className="bg-white p-3 rounded-lg shadow-inner">
+                        <div key={item.label} className="bg-white p-2 rounded-lg shadow-inner">
                           <span className="text-sm text-gray-600 block mb-1">{item.label}</span>
                           <span className="text-base font-mono text-blue-900">{item.value}</span>
                         </div>
@@ -396,9 +446,9 @@ const TrackDetail = () => {
             {/* Close Button */}
             <Button
               onClick={closeImageModal}
-              className="absolute top-6 right-6 bg-red-600 hover:bg-red-700 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg"
+              className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5" />
             </Button>
           </div>
         </div>

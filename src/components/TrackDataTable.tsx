@@ -165,7 +165,7 @@ const TrackDataTable: React.FC = () => {
             <div>
               <CardTitle className="text-2xl font-bold flex items-center gap-2">
                 <MapPin className="w-6 h-6" />
-                Tropical Cyclone Data Dashboard
+                Tropical Cyclone Dashboard 
               </CardTitle>
               <p className="text-blue-100 mt-2">
                 Comprehensive tracking data for tropical cyclone systems with detailed meteorological observations
