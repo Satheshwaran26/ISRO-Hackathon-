@@ -203,31 +203,18 @@ const Index = ({ showDashboard: initialShowDashboard = false }: IndexProps) => {
           >
             <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
               <img
-                src="/src/assets/img/3DIMG_01NOV2015_0000_L1C_ASIA_MER_V01R00.jpg"
+                src="./src/assets/img/3DIMG_01NOV2015_0000_L1C_ASIA_MER_V01R00.jpg"
                 alt="Tropical Cyclone Visualization"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
               <div className="absolute bottom-6 left-6 right-6">
-                <p className="text-white text-lg font-semibold">
-                  {getText('Real-time Satellite Imagery', 'रीयल-टाइम सैटेलाइट इमेजरी')}
-                </p>
-                <p className="text-white/80 text-sm">
-                  {getText('INSAT-3DR/3DS Data', 'INSAT-3DR/3DS डेटा')}
-                </p>
+                
               </div>
             </div>
 
             {/* Floating Stats Cards */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="absolute -right-4 top-4 bg-white rounded-2xl p-4 shadow-lg border border-blue-100"
-            >
-              <p className="text-sm text-blue-600 font-medium">Resolution</p>
-              <p className="text-lg font-semibold text-blue-900">4km/pixel</p>
-            </motion.div>
+           
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -264,55 +251,7 @@ const Index = ({ showDashboard: initialShowDashboard = false }: IndexProps) => {
         </div>
       </section>
 
-      {/* Video Section */}
-      <section id="demo" className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <p className="text-orange-500 font-semibold mb-4 uppercase tracking-wider">Project Demo</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-6">
-              {getText('Watch Our Project Overview', 'हमारा प्रोजेक्ट अवलोकन देखें')}
-            </h2>
-            <p className="text-lg text-blue-600/70 max-w-2xl mx-auto">
-              {getText(
-                'Explore our innovative approach to cloud motion prediction through these comprehensive video demonstrations.',
-                'इन व्यापक वीडियो प्रदर्शनों के माध्यम से बादल गति भविष्यवाणी के लिए हमारे नवीन दृष्टिकोण का अन्वेषण करें।'
-              )}
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* English Video */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-blue-100 group hover:shadow-xl transition-all duration-300">
-              <div className="aspect-video bg-blue-50 relative overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-white text-4xl">▶</span>
-                  </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-6">
-                  <h3 className="text-white text-xl font-semibold">English Demonstration</h3>
-                  <p className="text-white/80">Comprehensive project walkthrough</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Hindi Video */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-blue-100 group hover:shadow-xl transition-all duration-300">
-              <div className="aspect-video bg-blue-50 relative overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-white text-4xl">▶</span>
-                  </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-6">
-                  <h3 className="text-white text-xl font-semibold">हिंदी प्रदर्शन</h3>
-                  <p className="text-white/80">विस्तृत परियोजना प्रदर्शन</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Team Section */}
       <section id="team" className="py-20 bg-gradient-to-b from-blue-50/50 to-white">
