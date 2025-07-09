@@ -10,7 +10,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  assetsInclude: ['**/*.nc', '**/*.h5', '**/*.csv', '**/*.jpg', '**/*.png'], // Add image formats
+  assetsInclude: ['**/*.csv', '**/*.nc', '**/*.h5'],
   build: {
     rollupOptions: {
       output: {
