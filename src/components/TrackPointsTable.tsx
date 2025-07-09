@@ -1,19 +1,26 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
-import { Eye } from 'lucide-react';
+import { Eye, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 interface TrackPoint {
   timestamp: string;
-  centroid_lat: number;
-  centroid_lon: number;
+  center_lat: number;
+  center_lon: number;
   pixel_count: number;
-  mean_bt_k: number;
-  min_bt_k: number;
-  median_bt_k: number;
-  std_bt_k: number;
+  areakm2: number;
+  eccentricity: number;
+  perimeter_km: number;
+  major_axis_length_km: number;
+  minor_axis_length_km: number;
+  orientation_deg: number;
+  mean_tb_k: number;
+  min_tb_k: number;
+  max_tb_k: number;
+  median_tb_k: number;
+  std_tb_k: number;
   min_radius_km: number;
   mean_radius_km: number;
   max_radius_km: number;
@@ -29,12 +36,17 @@ interface TrackPointsTableProps {
   onImageSelect?: (trackPoint: TrackPoint) => void;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const TrackPointsTable: React.FC<TrackPointsTableProps> = ({ 
   trackPoints, 
   onImageClick, 
   selectedImages = [],
   onImageSelect 
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(trackPoints.length / ITEMS_PER_PAGE);
+
   const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleString();
   };
@@ -49,12 +61,22 @@ const TrackPointsTable: React.FC<TrackPointsTableProps> = ({
     return selectedImages.some(img => img.image_filename === trackPoint.image_filename);
   };
 
-  // Show only first 2 track points
-  const displayedTrackPoints = trackPoints.slice(0, 2);
+  // Pagination handlers
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.min(Math.max(1, page), totalPages));
+  };
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const displayedTrackPoints = trackPoints.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-      <h4 className="text-lg font-semibold text-blue-900 mb-3">Track Points Details (First 2 Points)</h4>
+      <div className="flex justify-between items-center mb-3">
+        <h4 className="text-lg font-semibold text-blue-900">Track Points Details</h4>
+        <div className="text-sm text-blue-700">
+          Showing {startIndex + 1} to {Math.min(startIndex + ITEMS_PER_PAGE, trackPoints.length)} of {trackPoints.length} points
+        </div>
+      </div>
       <div className="overflow-x-auto">
         <Table className="w-full">
           <TableHeader>
@@ -73,7 +95,7 @@ const TrackPointsTable: React.FC<TrackPointsTableProps> = ({
           </TableHeader>
           <TableBody>
             {displayedTrackPoints.map((point, index) => (
-              <TableRow key={index} className="hover:bg-blue-50 transition-colors">
+              <TableRow key={startIndex + index} className="hover:bg-blue-50 transition-colors">
                 {onImageSelect && (
                   <TableCell>
                     <Checkbox
@@ -84,11 +106,11 @@ const TrackPointsTable: React.FC<TrackPointsTableProps> = ({
                   </TableCell>
                 )}
                 <TableCell className="font-medium text-gray-800">{formatTimestamp(point.timestamp)}</TableCell>
-                <TableCell className="text-gray-700">{point.centroid_lat.toFixed(2)}</TableCell>
-                <TableCell className="text-gray-700">{point.centroid_lon.toFixed(2)}</TableCell>
+                <TableCell className="text-gray-700">{point.center_lat.toFixed(2)}</TableCell>
+                <TableCell className="text-gray-700">{point.center_lon.toFixed(2)}</TableCell>
                 <TableCell className="text-gray-700">{point.pixel_count.toLocaleString()}</TableCell>
-                <TableCell className="text-gray-700">{point.mean_bt_k.toFixed(1)}</TableCell>
-                <TableCell className="text-gray-700">{point.min_bt_k.toFixed(1)}</TableCell>
+                <TableCell className="text-gray-700">{point.mean_tb_k.toFixed(1)}</TableCell>
+                <TableCell className="text-gray-700">{point.min_tb_k.toFixed(1)}</TableCell>
                 <TableCell className="text-gray-700">{point.mean_radius_km.toFixed(1)}</TableCell>
                 <TableCell className="text-gray-700">{point.max_cth_km.toFixed(1)}</TableCell>
                 <TableCell className="text-gray-700">
@@ -108,6 +130,76 @@ const TrackPointsTable: React.FC<TrackPointsTableProps> = ({
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="mt-4 flex items-center justify-between">
+        <div className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => goToPage(1)}
+            disabled={currentPage === 1}
+            className="px-2"
+          >
+            <ChevronsLeft className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-2"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          <div className="flex items-center gap-1">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+              return (
+                <Button
+                  key={pageNum}
+                  variant={currentPage === pageNum ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => goToPage(pageNum)}
+                  className="w-8 h-8"
+                >
+                  {pageNum}
+                </Button>
+              );
+            })}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-2"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => goToPage(totalPages)}
+            disabled={currentPage === totalPages}
+            className="px-2"
+          >
+            <ChevronsRight className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );

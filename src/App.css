@@ -4,7 +4,11 @@
   padding: 2rem;
   text-align: center;
 }
-
+body{
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+}
 .logo {
   height: 6em;
   padding: 1.5em;

@@ -5,8 +5,27 @@
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
+body{
+  font-family: 'Poppins', sans-serif;
 
+  
+}
+
+/* Global font size scaling using CSS custom properties */
+:root {
+  --font-size-scale: 1;
+}
+
+/* Apply font size scaling to the root element */
+html {
+  font-size: calc(16px * var(--font-size-scale));
+}
 @layer base {
+  html {
+    font-family: 'Poppins', sans-serif;
+    --dynamic-font-size: 1rem;
+  }
+  
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -101,4 +120,35 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Global font size utility classes */
+html.font-xs {
+  font-size: 12px !important;
+}
+
+html.font-sm {
+  font-size: 14px !important;
+}
+
+html.font-base {
+  font-size: 16px !important;
+}
+
+html.font-lg {
+  font-size: 18px !important;
+}
+
+html.font-xl {
+  font-size: 20px !important;
+}
+
+html.font-2xl {
+  font-size: 24px !important;
+}
+
+/* Apply font size inheritance to all elements */
+html.font-xs *, html.font-sm *, html.font-base *, 
+html.font-lg *, html.font-xl *, html.font-2xl * {
+  font-size: inherit !important;
 }

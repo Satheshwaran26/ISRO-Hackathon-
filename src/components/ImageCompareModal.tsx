@@ -5,13 +5,20 @@ import { useFontSize } from '../contexts/FontSizeContext';
  
 interface TrackPoint {
   timestamp: string;
-  centroid_lat: number;
-  centroid_lon: number;
+  center_lat: number;
+  center_lon: number;
   pixel_count: number;
-  mean_bt_k: number;
-  min_bt_k: number;
-  median_bt_k: number;
-  std_bt_k: number;
+  areakm2: number;
+  eccentricity: number;
+  perimeter_km: number;
+  major_axis_length_km: number;
+  minor_axis_length_km: number;
+  orientation_deg: number;
+  mean_tb_k: number;
+  min_tb_k: number;
+  max_tb_k: number;
+  median_tb_k: number;
+  std_tb_k: number;
   min_radius_km: number;
   mean_radius_km: number;
   max_radius_km: number;
@@ -85,11 +92,11 @@ const ImageCompareModal: React.FC<ImageCompareModalProps> = ({ images, onClose }
                       <div className="grid grid-cols-2 gap-4 flex-1">
                         <div>
                           <span className="text-sm font-semibold text-gray-600">Latitude:</span>
-                          <p className="text-sm font-mono text-gray-800">{image.centroid_lat.toFixed(4)}°</p>
+                          <p className="text-sm font-mono text-gray-800">{image.center_lat.toFixed(4)}°</p>
                         </div>
                         <div>
                           <span className="text-sm font-semibold text-gray-600">Longitude:</span>
-                          <p className="text-sm font-mono text-gray-800">{image.centroid_lon.toFixed(4)}°</p>
+                          <p className="text-sm font-mono text-gray-800">{image.center_lon.toFixed(4)}°</p>
                         </div>
                       </div>
                     </div>
@@ -103,19 +110,19 @@ const ImageCompareModal: React.FC<ImageCompareModalProps> = ({ images, onClose }
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div className="bg-white p-2 rounded">
                           <strong className="text-gray-600">Mean BT:</strong>
-                          <p className="text-gray-800 font-mono">{image.mean_bt_k.toFixed(1)} K</p>
+                          <p className="text-gray-800 font-mono">{image.mean_tb_k.toFixed(1)} K</p>
                         </div>
                         <div className="bg-white p-2 rounded">
                           <strong className="text-gray-600">Min BT:</strong>
-                          <p className="text-gray-800 font-mono">{image.min_bt_k.toFixed(1)} K</p>
+                          <p className="text-gray-800 font-mono">{image.min_tb_k.toFixed(1)} K</p>
                         </div>
                         <div className="bg-white p-2 rounded">
                           <strong className="text-gray-600">Median BT:</strong>
-                          <p className="text-gray-800 font-mono">{image.median_bt_k.toFixed(1)} K</p>
+                          <p className="text-gray-800 font-mono">{image.median_tb_k.toFixed(1)} K</p>
                         </div>
                         <div className="bg-white p-2 rounded">
                           <strong className="text-gray-600">Std BT:</strong>
-                          <p className="text-gray-800 font-mono">{image.std_bt_k.toFixed(1)} K</p>
+                          <p className="text-gray-800 font-mono">{image.std_tb_k.toFixed(1)} K</p>
                         </div>
                       </div>
                     </div>

@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -6,13 +5,23 @@ import TrackDataTable from '@/components/TrackDataTable';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useFontSize } from '@/contexts/FontSizeContext';
+import { motion } from 'framer-motion';
 
-const Index = () => {
-  const [showDashboard, setShowDashboard] = useState(false);
+interface IndexProps {
+  showDashboard?: boolean;
+}
+
+const Index = ({ showDashboard: initialShowDashboard = false }: IndexProps) => {
+  const [showDashboard, setShowDashboard] = useState(initialShowDashboard);
   const [language, setLanguage] = useState('en');
-  const { fontSize, increaseFontSize, decreaseFontSize, resetFontSize, getFontSizeClass } = useFontSize();
+  const { fontSize, increaseFontSize, decreaseFontSize, resetFontSize } = useFontSize();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Update showDashboard when prop changes
+  useEffect(() => {
+    setShowDashboard(initialShowDashboard);
+  }, [initialShowDashboard]);
 
   // Check if we should show dashboard based on navigation state
   useEffect(() => {
@@ -28,11 +37,11 @@ const Index = () => {
   };
 
   const goToDashboard = () => {
-    setShowDashboard(true);
-    // Small delay to ensure state is updated before scrolling
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
+    navigate('/dashboard');
+  };
+
+  const goToHome = () => {
+    navigate('/');
   };
 
   const toggleLanguage = () => {
@@ -43,76 +52,100 @@ const Index = () => {
     return language === 'en' ? enText : hiText;
   };
 
-  if (showDashboard) {
-    return (
-      <div className={`min-h-screen bg-white ${getFontSizeClass()}`}>
-        <nav className="sticky top-0 z-50 bg-gov-navy text-white shadow-lg">
-          <div className="container mx-auto px-4 py-4">
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
+
+  const NavBar = () => (
+    <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-sm border-b border-blue-100">
+      <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gov-saffron rounded-full flex items-center justify-center font-bold text-white">
-                  ISRO
+            <button 
+              onClick={goToHome}
+              className="text-2xl font-poppins font-bold text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              Team Lava
+            </button>
                 </div>
-                <div>
-                  <h1 className="text-lg font-govt font-semibold">
-                    {getText('Indian Space Research Organisation', 'भारतीय अंतरिक्ष अनुसंधान संगठन')}
-                  </h1>
-                  <p className="text-sm text-blue-200">
-                    {getText('भारतीय अंतरिक्ष अनुसंधान संगठन', 'Indian Space Research Organisation')}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-8">
+            {/* Font Size Controls */}
+            <div className="flex items-center space-x-2 bg-blue-50 rounded-full px-4 py-2">
                   <Button 
                     onClick={decreaseFontSize}
-                    size="sm"
-                    className="bg-gray-600 hover:bg-gray-700 text-white text-xs"
+                variant="ghost"
+                className="hover:bg-blue-100 text-blue-600 font-medium w-8 h-8 rounded-full p-0"
+                disabled={fontSize === "xs"}
                   >
                     A-
                   </Button>
-                  <Button 
-                    onClick={resetFontSize}
-                    size="sm"
-                    className="bg-gray-600 hover:bg-gray-700 text-white text-xs"
-                  >
-                    A
-                  </Button>
+              <span className="text-blue-600 font-medium px-2">A</span>
                   <Button 
                     onClick={increaseFontSize}
-                    size="sm"
-                    className="bg-gray-600 hover:bg-gray-700 text-white text-xs"
+                variant="ghost"
+                className="hover:bg-blue-100 text-blue-600 font-medium w-8 h-8 rounded-full p-0"
+                disabled={fontSize === "2xl"}
                   >
                     A+
                   </Button>
+            </div>
+
+            {/* Language Toggle */}
                   <Button 
                     onClick={toggleLanguage}
-                    size="sm"
-                    className="bg-gray-600 hover:bg-gray-700 text-white"
+              variant="outline"
+              className="border-blue-200 hover:bg-blue-50 text-blue-600 font-medium px-6"
                   >
-                    {language === 'en' ? 'हिं' : 'EN'}
+              {language === 'en' ? 'हिंदी' : 'English'}
                   </Button>
-                </div>
-                <Button 
-                  onClick={() => setShowDashboard(false)}
-                  className="bg-gov-saffron hover:bg-orange-600 text-white"
+
+            {/* Navigation Links */}
+            {!showDashboard && (
+              <div className="flex space-x-6">
+                <button 
+                  onClick={goToHome}
+                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                 >
-                  {getText('Back to Home', 'होम पर वापस')}
-                </Button>
+                  {getText('Home', 'होम')}
+                </button>
+                <button 
+                  onClick={goToDashboard}
+                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                >
+                  {getText('Project Demo', 'प्रोजेक्ट डेमो')}
+                </button>
               </div>
+            )}
+
+            {showDashboard && (
+              <Button 
+                onClick={goToHome}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-full shadow-md transition-all duration-300"
+              >
+                {getText('Back to Home', 'होम पर वापस')}
+              </Button>
+            )}
+          </div>
             </div>
           </div>
         </nav>
+  );
 
-        <div className="container mx-auto py-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-govt font-bold text-gov-navy mb-4">
+  if (showDashboard) {
+    return (
+      <div className="min-h-screen bg-white font-poppins">
+        <NavBar />
+        <div className="container mx-auto py-24 px-6">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-blue-600 mb-6">
               {getText('Tropical Cyclone Data Dashboard', 'उष्णकटिबंधीय चक्रवात डेटा डैशबोर्ड')}
             </h1>
-            <p className="text-xl text-gov-grey max-w-3xl mx-auto font-formal">
+            <p className="text-lg text-blue-600/80 max-w-3xl mx-auto">
               {getText(
-                'Explore comprehensive tracking data for tropical cyclone systems with detailed meteorological observations and track point analysis.',
-                'विस्तृत मौसम विज्ञान अवलोकन और ट्रैक पॉइंट विश्लेषण के साथ उष्णकटिबंधीय चक्रवात प्रणालियों के लिए व्यापक ट्रैकिंग डेटा का अन्वेषण करें।'
+                'Explore comprehensive tracking data for tropical cyclone systems with detailed meteorological observations.',
+                'विस्तृत मौसम विज्ञान अवलोकन के साथ उष्णकटिबंधीय चक्रवात प्रणालियों के लिए व्यापक ट्रैकिंग डेटा का अन्वेषण करें।'
               )}
             </p>
           </div>
@@ -123,122 +156,104 @@ const Index = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-white font-formal ${getFontSizeClass()}`}>
-      {/* Fixed Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-gov-navy text-white shadow-lg">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gov-saffron rounded-full flex items-center justify-center font-bold text-white">
-                ISRO
-              </div>
-              <div>
-                <h1 className="text-lg font-govt font-semibold">
-                  {getText('Indian Space Research Organisation', 'भारतीय अंतरिक्ष अनुसंधान संगठन')}
-                </h1>
-                <p className="text-sm text-blue-200">
-                  {getText('भारतीय अंतरिक्ष अनुसंधान संगठन', 'Indian Space Research Organisation')}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Button 
-                  onClick={decreaseFontSize}
-                  size="sm"
-                  className="bg-gray-600 hover:bg-gray-700 text-white text-xs"
-                >
-                  A-
-                </Button>
-                <Button 
-                  onClick={resetFontSize}
-                  size="sm"
-                  className="bg-gray-600 hover:bg-gray-700 text-white text-xs"
-                >
-                  A
-                </Button>
-                <Button 
-                  onClick={increaseFontSize}
-                  size="sm"
-                  className="bg-gray-600 hover:bg-gray-700 text-white text-xs"
-                >
-                  A+
-                </Button>
-                <Button 
-                  onClick={toggleLanguage}
-                  size="sm"
-                  className="bg-gray-600 hover:bg-gray-700 text-white"
-                >
-                  {language === 'en' ? 'हिं' : 'EN'}
-                </Button>
-              </div>
-              <div className="hidden md:flex space-x-8">
-                <button 
-                  onClick={() => scrollToSection('home')}
-                  className="hover:text-gov-saffron transition-colors border-b-2 border-transparent hover:border-gov-saffron pb-1"
-                >
-                  {getText('Home', 'होम')}
-                </button>
-                <button 
-                  onClick={() => scrollToSection('team')}
-                  className="hover:text-gov-saffron transition-colors border-b-2 border-transparent hover:border-gov-saffron pb-1"
-                >
-                  {getText('About Team', 'टीम के बारे में')}
-                </button>
-                <button 
-                  onClick={() => scrollToSection('problem')}
-                  className="hover:text-gov-saffron transition-colors border-b-2 border-transparent hover:border-gov-saffron pb-1"
-                >
-                  {getText('Problem Statement', 'समस्या कथन')}
-                </button>
-                <button 
-                  onClick={() => scrollToSection('dashboard')}
-                  className="hover:text-gov-saffron transition-colors border-b-2 border-transparent hover:border-gov-saffron pb-1"
-                >
-                  {getText('Dashboard', 'डैशबोर्ड')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-white font-poppins">
+      <NavBar />
 
-      {/* Landing Section */}
-      <section id="home" className="pt-24 pb-16 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto">
-            <h1 className={`text-5xl md:text-6xl font-govt font-bold text-gov-navy mb-6 ${getFontSizeClass()}`}>
-              {getText('Team Antariksh', 'टीम अंतरिक्ष')}
-            </h1>
-            <h2 className={`text-2xl md:text-3xl font-formal text-gov-grey mb-8 ${getFontSizeClass()}`}>
-              {getText('Bharatiya Antariksh Hackathon 2025', 'भारतीय अंतरिक्ष हैकाथॉन 2025')}
-            </h2>
-            <p className={`text-lg text-gov-grey mb-10 max-w-2xl mx-auto ${getFontSizeClass()}`}>
-              {getText(
-                'Advancing tropical cyclone prediction through innovative satellite data analysis and machine learning solutions',
-                'नवाचार उपग्रह डेटा विश्लेषण और मशीन लर्निंग समाधानों के माध्यम से उष्णकटिबंधीय चक्रवात पूर्वानुमान को आगे बढ़ाना'
-              )}
-            </p>
-            <Button 
-              onClick={goToDashboard}
-              className={`bg-gov-saffron hover:bg-orange-600 text-white px-8 py-4 text-lg font-semibold rounded-md shadow-lg ${getFontSizeClass()}`}
+      {/* Hero Section */}
+      <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-b from-blue-50/50 to-white">
+        {/* Background Decoration */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-100 rounded-full opacity-20"></div>
+          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-orange-100 rounded-full opacity-20"></div>
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-left"
             >
-              {getText('View Project Dashboard', 'प्रोजेक्ट डैशबोर्ड देखें')}
-            </Button>
+              <h1 className="text-5xl md:text-6xl font-bold text-blue-600 mb-6 leading-tight">
+                {getText('Tropical Cyclone', 'उष्णकटिबंधीय चक्रवात')}
+                <br />
+                {getText('Prediction System', 'पूर्वानुमान प्रणाली')}
+              </h1>
+              <p className="text-xl text-blue-600/80 mb-12 max-w-2xl leading-relaxed">
+                {getText(
+                  'Advanced satellite data analysis and machine learning solutions for accurate cyclone prediction',
+                  'सटीक चक्रवात पूर्वानुमान के लिए उन्नत उपग्रह डेटा विश्लेषण और मशीन लर्निंग समाधान'
+                )}
+              </p>
+              <Button 
+                onClick={goToDashboard}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-6 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                {getText('View Project', 'प्रोजेक्ट देखें')}
+              </Button>
+            </motion.div>
+
+            {/* Image Content */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src="/src/assets/img/3DIMG_01NOV2015_0000_L1C_ASIA_MER_V01R00.jpg"
+                  alt="Tropical Cyclone Visualization"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
+                <div className="absolute bottom-6 left-6 right-6">
+                  <p className="text-white text-lg font-semibold">
+                    {getText('Real-time Satellite Imagery', 'रीयल-टाइम सैटेलाइट इमेजरी')}
+                  </p>
+                  <p className="text-white/80 text-sm">
+                    {getText('INSAT-3DR/3DS Data', 'INSAT-3DR/3DS डेटा')}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Floating Stats Cards */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-lg p-4 border-2 border-blue-100"
+              >
+                <p className="text-blue-600 font-semibold">Data Coverage</p>
+                <p className="text-orange-500">November 2015</p>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-lg p-4 border-2 border-blue-100"
+              >
+                <p className="text-blue-600 font-semibold">Resolution</p>
+                <p className="text-orange-500">4km/pixel</p>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Problem Statement Section */}
-      <section id="problem" className="py-16 bg-white">
-        <div className="container mx-auto px-4">
+      <section id="problem" className="py-20 bg-white border-t border-b border-blue-100">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
-            <h2 className={`text-3xl font-govt font-bold text-gov-navy mb-8 text-center ${getFontSizeClass()}`}>
+            <h2 className="text-3xl md:text-4xl font-govt font-bold text-blue-600 mb-10 text-center">
               {getText('Problem Statement – Tropical Cloud Cluster (TCC)', 'समस्या कथन - उष्णकटिबंधीय बादल समूह (TCC)')}
             </h2>
-            <Card className="border-2 border-gov-navy/10 shadow-lg">
-              <CardContent className="p-8">
-                <p className={`text-lg text-gov-grey leading-relaxed font-formal ${getFontSizeClass()}`}>
+            <Card className="border-2 border-blue-100 shadow-lg rounded-2xl overflow-hidden bg-white">
+              <CardContent className="p-8 md:p-10">
+                <p className="text-lg text-blue-600/80 leading-relaxed">
                   {getText(
                     'Tropical Cloud Cluster (TCC) is a key element of the weather and climate by transporting mass, momentum and heat vertically into the Earth\'s atmosphere. Identifying the TCC is paramount important to the identification of cyclogenesis and its evolution is of great significance in weather and climate system. To study the initiation and development of TCCs over the Indian Oceanic region, a dataset called "Indian Tropical Cloud Cluster (ITCC)" is to be generated using INSAT-3D Infrared Brightness Temperature (IRBRT) data. In order to generate the ITCC data, an automatic algorithm is to be developed based on deep learning/machine learning. Thus, the current proposal describes methodology for identifying the TCCs using INSAT-3D IRBRT data. Identified TCCs will be tracked as they move around their Indian Ocean basin and variables such as TCC size, location, convective intensity, cloud-top height. The algorithm can be adapted to near-real-time tracking of TCCs, which could be of great benefit to the tropical cyclone forecast community.',
                     'उष्णकटिबंधीय बादल समूह (Tropical Cloud Cluster - TCC) मौसम और जलवायु प्रणाली का एक प्रमुख घटक है, जो पृथ्वी के वायुमंडल में द्रव्यमान, संवेग और ऊष्मा को ऊर्ध्वाधर रूप से स्थानांतरित करता है। TCC की पहचान करना चक्रवात-जनन (cyclogenesis) की पहचान के लिए अत्यंत महत्वपूर्ण है, और इसका विकास मौसम और जलवायु प्रणाली में महत्वपूर्ण भूमिका निभाता है। भारतीय महासागर क्षेत्र में TCC के आरंभ और विकास का अध्ययन करने के लिए, "इंडियन ट्रॉपिकल क्लाउड क्लस्टर (ITCC)" नामक एक डेटासेट INSAT-3D के इन्फ्रारेड ब्राइटनेस टेम्परेचर (IRBRT) डेटा का उपयोग करके तैयार किया जाएगा। ITCC डेटा उत्पन्न करने के लिए एक स्वचालित एल्गोरिदम विकसित किया जाना है, जो डीप लर्निंग/मशीन लर्निंग पर आधारित होगा। इस प्रस्ताव में INSAT-3D IRBRT डेटा का उपयोग करके TCC की पहचान की कार्यप्रणाली का वर्णन किया गया है। पहचाने गए TCCs को उनके भारतीय महासागर क्षेत्र में गतिशील होने के दौरान ट्रैक किया जाएगा और उनके आकार, स्थान, संवहन तीव्रता, और क्लाउड-टॉप ऊँचाई जैसे चर को मापा जाएगा। यह एल्गोरिदम TCCs को लगभग वास्तविक समय (near-real-time) में ट्रैक करने के लिए अनुकूलित किया जा सकता है, जो उष्णकटिबंधीय चक्रवात पूर्वानुमान समुदाय के लिए अत्यंत लाभकारी हो सकता है।'
@@ -250,25 +265,49 @@ const Index = () => {
         </div>
       </section>
 
-      {/* YouTube Video Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className={`text-3xl font-govt font-bold text-gov-navy mb-8 ${getFontSizeClass()}`}>
+      {/* Video Section */}
+      <section id="demo" className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-orange-500 font-semibold mb-4 uppercase tracking-wider">Project Demo</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-blue-600 mb-6">
               {getText('Watch Our Project Overview', 'हमारा प्रोजेक्ट अवलोकन देखें')}
             </h2>
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-gov-saffron rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-white text-2xl">▶</span>
+            <p className="text-lg text-blue-600/70 max-w-2xl mx-auto">
+              {getText(
+                'Explore our innovative approach to cloud motion prediction through these comprehensive video demonstrations.',
+                'इन व्यापक वीडियो प्रदर्शनों के माध्यम से बादल गति भविष्यवाणी के लिए हमारे नवीन दृष्टिकोण का अन्वेषण करें।'
+              )}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* English Video */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-blue-100 group hover:shadow-xl transition-all duration-300">
+              <div className="aspect-video bg-blue-50 relative overflow-hidden">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-white text-4xl">▶</span>
                   </div>
-                  <p className={`text-gov-grey font-formal ${getFontSizeClass()}`}>
-                    {getText('Project Demo Video', 'प्रोजेक्ट डेमो वीडियो')}
-                  </p>
-                  <p className={`text-sm text-gray-500 mt-2 ${getFontSizeClass()}`}>
-                    {getText('Coming Soon', 'जल्द आ रहा है')}
-                  </p>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-6">
+                  <h3 className="text-white text-xl font-semibold">English Demonstration</h3>
+                  <p className="text-white/80">Comprehensive project walkthrough</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Hindi Video */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-blue-100 group hover:shadow-xl transition-all duration-300">
+              <div className="aspect-video bg-blue-50 relative overflow-hidden">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-white text-4xl">▶</span>
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-6">
+                  <h3 className="text-white text-xl font-semibold">हिंदी प्रदर्शन</h3>
+                  <p className="text-white/80">विस्तृत परियोजना प्रदर्शन</p>
                 </div>
               </div>
             </div>
@@ -276,91 +315,80 @@ const Index = () => {
         </div>
       </section>
 
-      {/* About Team Section */}
-      <section id="team" className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h2 className={`text-3xl font-govt font-bold text-gov-navy mb-12 text-center ${getFontSizeClass()}`}>
-              {getText('Meet Our Team', 'हमारी टीम से मिलें')}
-            </h2>
-            <div className="grid grid-cols-3 gap-8 items-start">
-              {/* Team Leader - Center positioned */}
-              <div className="col-start-2">
-                <Card className="text-center hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="w-20 h-20 bg-gov-navy text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                      SP
-                    </div>
-                    <CardTitle className={`text-gov-navy font-govt ${getFontSizeClass()}`}>SARATH P</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className={`text-gov-grey font-formal font-semibold ${getFontSizeClass()}`}>
-                      {getText('TEAM LEADER', 'टीम लीडर')}
-                    </p>
-                    <p className={`text-gov-grey font-formal text-sm mt-1 ${getFontSizeClass()}`}>
-                      {getText('AI Developer', 'AI डेवलपर')}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              {/* Team Members - Second Row */}
-              <div className="col-span-3 grid grid-cols-3 gap-8 mt-8">
-                <Card className="text-center hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="w-20 h-20 bg-gov-navy text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                      SV
-                    </div>
-                    <CardTitle className={`text-gov-navy font-govt ${getFontSizeClass()}`}>Satheshwaran V</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className={`text-gov-grey font-formal ${getFontSizeClass()}`}>
-                      {getText('App and Web Developer', 'ऐप और वेब डेवलपर')}
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card className="text-center hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="w-20 h-20 bg-gov-navy text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                      V
-                    </div>
-                    <CardTitle className={`text-gov-navy font-govt ${getFontSizeClass()}`}>Vikaas</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className={`text-gov-grey font-formal ${getFontSizeClass()}`}>
-                      {getText('AI/ML Developer', 'AI/ML डेवलपर')}
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card className="text-center hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="w-20 h-20 bg-gov-navy text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                      M
-                    </div>
-                    <CardTitle className={`text-gov-navy font-govt ${getFontSizeClass()}`}>Mathivathani</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className={`text-gov-grey font-formal ${getFontSizeClass()}`}>
-                      {getText('Research and Documentation', 'अनुसंधान और प्रलेखन')}
-                    </p>
-                  </CardContent>
-                </Card>
+      {/* Team Section */}
+      <section id="team" className="py-20 bg-gradient-to-b from-blue-50/50 to-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="text-orange-500 font-semibold mb-4 uppercase tracking-wider">Our Team</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-blue-600 mb-6">Meet Team LAVA</h2>
+            <p className="text-lg text-blue-600/70 max-w-2xl mx-auto">
+              {getText(
+                'A dedicated team of professionals working together to revolutionize weather forecasting through innovative cloud motion prediction technology.',
+                'नवीन क्लाउड मोशन प्रेडिक्शन टेक्नॉलॉजी के माध्यम से मौसम पूर्वानुमान को क्रांतिकारी बनाने के लिए काम करने वाली समर्पित पेशेवरों की टीम।'
+              )}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Team Leader */}
+            <div className="group">
+              <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-blue-100 transform group-hover:-translate-y-2 transition-all duration-300">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-lg">
+                  SP
+                </div>
+                <h3 className="text-xl font-bold text-blue-600 mb-2 text-center">Sarath P</h3>
+                <p className="text-orange-500 font-semibold text-center mb-2">Team Lead & AI/ML Engineer</p>
+                <p className="text-blue-600/70 text-sm text-center">
+                  Leads the team and specializes in deep learning and computer vision, with a strong focus on satellite imagery analysis and model deployment.
+                </p>
               </div>
             </div>
+
+            {/* Other Team Members */}
+            {[
+              {
+                initials: 'V',
+                name: 'Vikass',
+                role: 'AI/ML Engineer',
+                description: 'Works on developing and training AI models, contributing to robust backend pipelines and scalable ML systems.'
+              },
+              {
+                initials: 'SV',
+                name: 'Satheshwaran V',
+                role: 'Web & App Developer',
+                description: 'Designs and develops responsive and user-friendly web and mobile interfaces, ensuring smooth user experience and frontend performance.'
+              },
+              {
+                initials: 'M',
+                name: 'Mathivathani',
+                role: 'Research & Documentation',
+                description: 'Responsible for data validation, research writing, and comprehensive documentation, aiding scientific interpretation and project clarity.'
+              }
+            ].map((member, index) => (
+              <div key={member.initials} className="group">
+                <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-blue-100 transform group-hover:-translate-y-2 transition-all duration-300">
+                  <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-orange-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl font-bold shadow-lg">
+                    {member.initials}
+                  </div>
+                  <h3 className="text-xl font-bold text-blue-600 mb-2 text-center">{member.name}</h3>
+                  <p className="text-orange-500 font-semibold text-center mb-2">{member.role}</p>
+                  <p className="text-blue-600/70 text-sm text-center">{member.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Dashboard Preview Section */}
-      <section id="dashboard" className="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="container mx-auto px-4 text-center">
+
+      {/* Dashboard Preview */}
+      <section id="dashboard" className="py-20 bg-white">
+        <div className="container mx-auto px-6 text-center">
           <div className="max-w-4xl mx-auto">
-            <h2 className={`text-3xl font-govt font-bold text-gov-navy mb-8 ${getFontSizeClass()}`}>
+            <h2 className="text-3xl md:text-4xl font-govt font-bold text-blue-600 mb-8">
               {getText('Tropical Cyclone Data Dashboard', 'उष्णकटिबंधीय चक्रवात डेटा डैशबोर्ड')}
             </h2>
-            <p className={`text-lg text-gov-grey mb-10 font-formal ${getFontSizeClass()}`}>
+            <p className="text-lg text-blue-600/80 mb-12 leading-relaxed">
               {getText(
                 'Explore comprehensive tracking data for tropical cyclone systems with detailed meteorological observations and track point analysis.',
                 'विस्तृत मौसम विज्ञान अवलोकन और ट्रैक पॉइंट विश्लेषण के साथ उष्णकटिबंधीय चक्रवात प्रणालियों के लिए व्यापक ट्रैकिंग डेटा का अन्वेषण करें।'
@@ -368,7 +396,7 @@ const Index = () => {
             </p>
             <Button 
               onClick={goToDashboard}
-              className={`bg-gov-saffron hover:bg-orange-600 text-white px-8 py-4 text-lg font-semibold rounded-md shadow-lg ${getFontSizeClass()}`}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
               {getText('Go to Dashboard', 'डैशबोर्ड पर जाएं')}
             </Button>
@@ -377,29 +405,20 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gov-navy text-white py-8">
-        <div className="container mx-auto px-4">
-          <Separator className="mb-8 bg-blue-400" />
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
-              <p className={`font-formal ${getFontSizeClass()}`}>
-                {getText('© 2025 ISRO Hackathon | Powered by Team Antariksh', '© 2025 ISRO हैकाथॉन | टीम अंतरिक्ष द्वारा संचालित')}
-              </p>
-            </div>
-            <div className="flex space-x-8 text-sm">
-              <button className={`hover:text-gov-saffron transition-colors ${getFontSizeClass()}`}>
-                {getText('Privacy Policy', 'गोपनीयता नीति')}
-              </button>
-              <button className={`hover:text-gov-saffron transition-colors ${getFontSizeClass()}`}>
-                {getText('Terms & Conditions', 'नियम और शर्तें')}
-              </button>
-            </div>
-          </div>
-          <div className={`text-center mt-4 text-blue-200 text-sm font-formal ${getFontSizeClass()}`}>
-            {getText('भारतीय अंतरिक्ष अनुसंधान संगठन | Indian Space Research Organisation', 'Indian Space Research Organisation | भारतीय अंतरिक्ष अनुसंधान संगठन')}
+      <footer className="bg-white border-t border-blue-100 py-8">
+        <div className="container mx-auto px-6">
+          <div className="text-center space-y-4">
+            <h3 className="text-2xl font-bold text-blue-600">Team LAVA</h3>
+            <p className="text-blue-600/70 max-w-2xl mx-auto">
+              Advancing weather forecasting technology through innovative cloud motion prediction using INSAT-3DR/3DS satellite imagery.
+            </p>
+            <p className="text-sm text-blue-600/60">
+              © 2025 Team LAVA. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
+
     </div>
   );
 };

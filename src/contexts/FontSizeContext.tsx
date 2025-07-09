@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
-const fontSizes = ["sm", "base", "lg", "xl"] as const;
+const fontSizes = ["xs", "sm", "base", "lg", "xl", "2xl"] as const;
 type FontSize = typeof fontSizes[number];
 
 interface FontSizeContextType {
@@ -21,8 +21,27 @@ interface FontSizeProviderProps {
 export function FontSizeProvider({ children }: FontSizeProviderProps) {
   const [fontSize, setFontSize] = useState<FontSize>("base");
 
+  // Apply font size to document root when fontSize changes
+  useEffect(() => {
+    const html = document.documentElement;
+    
+    // Set CSS custom property for font size scaling
+    const fontSizeScale = {
+      'xs': '0.75',
+      'sm': '0.875',
+      'base': '1',
+      'lg': '1.125',
+      'xl': '1.25',
+      '2xl': '1.5'
+    };
+    
+    html.style.setProperty('--font-size-scale', fontSizeScale[fontSize]);
+  }, [fontSize]);
+
   const getFontSizeClass = () => {
     switch (fontSize) {
+      case "xs":
+        return "text-xs";
       case "sm":
         return "text-sm";
       case "base":
@@ -31,6 +50,8 @@ export function FontSizeProvider({ children }: FontSizeProviderProps) {
         return "text-lg";
       case "xl":
         return "text-xl";
+      case "2xl":
+        return "text-2xl";
       default:
         return "text-base";
     }
